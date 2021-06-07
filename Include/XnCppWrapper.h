@@ -27,6 +27,7 @@
 //---------------------------------------------------------------------------
 #include <XnOpenNI.h>
 #include <XnCodecIDs.h>
+#include <iostream>
 
 //---------------------------------------------------------------------------
 // Types
@@ -8820,6 +8821,7 @@ private:
 		 */
 		inline XnStatus OpenFileRecording(const XnChar* strFileName, ProductionNode& playerNode)
 		{
+			std::cout << "enters OpenFileRecording" << std::endl;
 			XnStatus nRetVal = XN_STATUS_OK;
 
 			XnNodeHandle hPlayer;

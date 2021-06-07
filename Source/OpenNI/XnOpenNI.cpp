@@ -43,6 +43,8 @@
 #include <XnPropNames.h>
 #include "XnTypeManager.h"
 
+#include <iostream>
+
 //---------------------------------------------------------------------------
 // Defines
 //---------------------------------------------------------------------------
@@ -526,34 +528,51 @@ XN_C_API void xnContextUnregisterFromShutdown(XnContext* pContext, XnCallbackHan
 
 XN_C_API XnStatus xnContextOpenFileRecordingEx(XnContext* pContext, const XnChar* strFileName, XnNodeHandle* phPlayerNode)
 {
+	std::cout << "1" << std::endl;
 	XnStatus nRetVal = XN_STATUS_OK;
+	std::cout << "2" << std::endl;
 
 	XN_VALIDATE_INPUT_PTR(pContext);
+	std::cout << "3" << std::endl;
 	XN_VALIDATE_INPUT_PTR(strFileName);
+	std::cout << "4" << std::endl;
 	XN_VALIDATE_OUTPUT_PTR(phPlayerNode);
+	std::cout << "5" << std::endl;
 
 	*phPlayerNode = NULL;
 
 	const char* strExt = strrchr(strFileName, '.');
+	std::cout << "6" << std::endl;
 	if (strExt == NULL)
 	{
 		//No extension
+		std::cout << "7" << std::endl;
 		return XN_STATUS_BAD_FILE_EXT;
 	}
+	std::cout << "8" << std::endl;
 	strExt++;
+	std::cout << "9" << std::endl;
 
 	XnNodeHandle hPlayer;
+	std::cout << "10" << std::endl;
+	// Fails here
 	nRetVal = xnCreatePlayer(pContext, strExt, &hPlayer);
+	std::cout << "11" << std::endl;
 	XN_IS_STATUS_OK(nRetVal);
+	std::cout << "12" << std::endl;
 
 	nRetVal = xnSetPlayerSource(hPlayer, XN_RECORD_MEDIUM_FILE, strFileName);
+	std::cout << "13" << std::endl;
 	if (nRetVal != XN_STATUS_OK)
 	{
+		std::cout << "14" << std::endl;
 		xnProductionNodeRelease(hPlayer);
+		std::cout << "15" << std::endl;
 		return (nRetVal);
 	}
-
+	std::cout << "16" << std::endl;
 	*phPlayerNode = hPlayer;
+	std::cout << "17" << std::endl;
 	return XN_STATUS_OK;
 }
 
@@ -3809,12 +3828,16 @@ XN_C_API const XnChar* xnGetRecorderFormat(XnNodeHandle /*hInstance*/)
 //---------------------------------------------------------------------------
 XN_C_API XnStatus xnCreatePlayer(XnContext* pContext, const XnChar* strFormatName, XnNodeHandle* phPlayer)
 {
+	std::cout << "player 1" << std::endl;
 	XnStatus nRetVal = XN_STATUS_OK;
+	std::cout << "player 2" << std::endl;
 
 	// search for all players
 	XnNodeInfoList* pList;
 	nRetVal = xnEnumerateProductionTrees(pContext, XN_NODE_TYPE_PLAYER, NULL, &pList, NULL);
+	std::cout << "player 3" << std::endl;
 	XN_IS_STATUS_OK(nRetVal);
+	std::cout << "player 4" << std::endl;
 
 	XnNodeHandle hPlayer = NULL;
 
@@ -3823,34 +3846,44 @@ XN_C_API XnStatus xnCreatePlayer(XnContext* pContext, const XnChar* strFormatNam
 		xnNodeInfoListIteratorIsValid(it);
 		it = xnNodeInfoListGetNext(it))
 	{
+		std::cout << "player 5" << std::endl;
 		XnNodeInfo* pInfo = xnNodeInfoListGetCurrent(it);
+		std::cout << "player 6" << std::endl;
 
 		// only new ones
 		if (pInfo->hNode == NULL)
 		{
+			std::cout << "player 7" << std::endl;
 			nRetVal = xnCreateProductionTree(pContext, pInfo, &hPlayer);
+			std::cout << "player 8" << std::endl;
 			if (nRetVal != XN_STATUS_OK)
 			{
+				std::cout << "player 9" << std::endl;
 				xnLoggerWarning(g_logger, "Failed to create player %s of vendor %s to check for its type: %s", pInfo->Description.strName, pInfo->Description.strVendor, xnGetStatusString(nRetVal));
 				continue;
 			}
-
+			std::cout << "player 10" << std::endl;
 			const XnChar* strFormat = xnGetPlayerSupportedFormat(hPlayer);
-
+			std::cout << "player 11" << std::endl;
 			if (xnOSStrCaseCmp(strFormat, strFormatName) == 0)
 			{
 				// found it
+				std::cout << "player 12" << std::endl;
 				break;
 			}
 
 			// type doesn't match, free it
+			std::cout << "player 13" << std::endl;
 			xnProductionNodeRelease(hPlayer);
 			hPlayer = NULL;
+			std::cout << "player 14" << std::endl;
 		}
 	}
 
 	// free the list
+	std::cout << "player 15" << std::endl;
 	xnNodeInfoListFree(pList);
+	std::cout << "player 16" << std::endl;
 
 	if (hPlayer == NULL)
 	{
